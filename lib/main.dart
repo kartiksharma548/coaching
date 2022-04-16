@@ -1,3 +1,4 @@
+import 'package:coaching/globals.dart';
 import 'package:coaching/screens/add_player_screen.dart';
 import 'package:coaching/screens/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Coaching',
+      scaffoldMessengerKey: snackbarKey,
       theme: ThemeData(
         // This is the theme of your application.
         //

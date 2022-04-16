@@ -23,9 +23,12 @@ class RestUrls {
 
   ///login
   static Future<http.Response> login(var obj) async {
-    String urlName = apiUrl + "login";
+    String urlName = apiUrl + "signin";
     var url = Uri.parse(urlName);
-    final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+    final headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      "Accept": "application/json"
+    };
     var jsonBody = json.encode(obj);
     var request = await http.post(url, headers: headers, body: jsonBody);
 
