@@ -1,8 +1,32 @@
 import 'package:coaching/components/input_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  SharedPreferences? logindata;
+  bool? newuser;
+  @override
+  void initState() {
+    checkifalreadylogin();
+  }
+
+  void checkifalreadylogin() async {
+    logindata = await SharedPreferences.getInstance();
+    newuser = (logindata?.getBool('login') ?? true);
+    print(newuser);
+    if (newuser == true) {
+      // Provider.of<User>(context, listen: false).name =
+      //     logindata?.getString('username');
+      Navigator.pushNamed(context, '/home');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

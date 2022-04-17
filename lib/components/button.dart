@@ -2,31 +2,51 @@ import 'package:coaching/components/input_field.dart';
 import 'package:coaching/globals.dart';
 import 'package:coaching/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Button extends StatelessWidget {
-  var loginForm = GlobalKey<FormState>();
-  String email = "";
-  String pwd = "";
+class Button extends StatefulWidget {
   GlobalKey<InputFieldState> inputkey;
+  var loginForm = GlobalKey<FormState>();
   Button(this.loginForm, this.inputkey, {Key? key}) : super(key: key);
 
+  @override
+  State<Button> createState() => _Button();
+}
+
+class _Button extends State<Button> {
+  SharedPreferences? logindata;
+
+  String email = "";
+  String pwd = "";
+
+  @override
+  void initState() {
+    super.initState();
+    checkifalreadylogin();
+  }
+
+  void checkifalreadylogin() async {
+    logindata = await SharedPreferences.getInstance();
+  }
+
   register() {
-    if (loginForm.currentState!.validate()) {
-      var emailVal = inputkey.currentState!.txtEmail.text.toString();
-      var pwdVal = inputkey.currentState!.txtPwd.text.toString();
+    if (widget.loginForm.currentState!.validate()) {
+      var emailVal = widget.inputkey.currentState!.txtEmail.text.toString();
+      var pwdVal = widget.inputkey.currentState!.txtPwd.text.toString();
 
       var obj = {"email": emailVal, "password": pwdVal};
       var res = RestUrls.login(obj);
-      res
-          .then((value) => {
-                snackbarKey.currentState
-                    ?.showSnackBar(SnackBar(content: Text("Logged In.")))
-              })
-          .onError((error, stackTrace) => {
-                snackbarKey.currentState?.showSnackBar(
-                    SnackBar(content: Text("Please try again later.")))
-              });
+      res.then((value) => {postLoginProcess()}).onError((error, stackTrace) => {
+            snackbarKey.currentState?.showSnackBar(
+                SnackBar(content: Text("Please try again later.")))
+          });
     }
+  }
+
+  postLoginProcess() {
+    logindata?.setBool('login', true);
+    snackbarKey.currentState
+        ?.showSnackBar(SnackBar(content: Text("Logged In.")));
   }
 
   @override
