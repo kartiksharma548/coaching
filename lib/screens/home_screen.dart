@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:coaching/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -8,8 +11,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Timer(
+  //       Duration(seconds: 5),
+  //       () => Navigator.pushReplacement(
+  //           context, MaterialPageRoute(builder: (context) => SplashScreen())));
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Container());
+    return Container();
   }
 }

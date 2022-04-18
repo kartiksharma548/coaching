@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (newuser == true) {
       // Provider.of<User>(context, listen: false).name =
       //     logindata?.getString('username');
-      Navigator.pushNamed(context, '/home');
+      Navigator.popAndPushNamed(context, '/home');
     }
   }
 
