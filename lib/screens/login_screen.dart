@@ -11,7 +11,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   SharedPreferences? logindata;
-  bool? newuser;
+  bool? exists;
   @override
   void initState() {
     checkifalreadylogin();
@@ -19,9 +19,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void checkifalreadylogin() async {
     logindata = await SharedPreferences.getInstance();
-    newuser = (logindata?.getBool('login') ?? true);
-    print(newuser);
-    if (newuser == true) {
+    exists = (logindata?.getBool('login') ?? false);
+
+    print(exists);
+    if (exists == true) {
       // Provider.of<User>(context, listen: false).name =
       //     logindata?.getString('username');
       Navigator.popAndPushNamed(context, '/home');

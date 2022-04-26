@@ -1,5 +1,6 @@
 import 'package:coaching/globals.dart';
 import 'package:coaching/screens/add_player_screen.dart';
+import 'package:coaching/screens/add_user_screen.dart';
 import 'package:coaching/screens/home_screen.dart';
 import 'package:coaching/screens/login_screen.dart';
 import 'package:coaching/screens/splash_screen.dart';
@@ -37,6 +38,8 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/home': (context) => const HomeScreen(),
+        '/addUser': (context) => const AddUser(),
+        '/addPlayer': (context) => const AddPlayer()
       },
       //home: AddPlayer(),
     );

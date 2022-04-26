@@ -1,10 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:coaching/components/input_field.dart';
 import 'package:coaching/globals.dart';
+import 'package:coaching/models/user_model.dart';
 import 'package:coaching/services/api_service.dart';
+import 'package:coaching/services/storage_service.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Button extends StatefulWidget {
+  final StorageService _storageService = StorageService();
+
   GlobalKey<InputFieldState> inputkey;
   var loginForm = GlobalKey<FormState>();
   Button(this.loginForm, this.inputkey, {Key? key}) : super(key: key);
@@ -36,17 +44,37 @@ class _Button extends State<Button> {
 
       var obj = {"email": emailVal, "password": pwdVal};
       var res = RestUrls.login(obj);
-      res.then((value) => {postLoginProcess()}).onError((error, stackTrace) => {
-            snackbarKey.currentState?.showSnackBar(
-                SnackBar(content: Text("Please try again later.")))
-          });
+      res
+          .then((value) => {postLoginProcess(value)})
+          .onError((error, stackTrace) => {
+                snackbarKey.currentState?.showSnackBar(
+                    SnackBar(content: Text("Please try again later.")))
+              });
     }
   }
 
-  postLoginProcess() {
-    logindata?.setBool('login', true);
-    snackbarKey.currentState
-        ?.showSnackBar(SnackBar(content: Text("Logged In.")));
+  postLoginProcess(Response val) async {
+    try {
+      // Map<String, dynamic> mapJson = jsonDecode(val.body);
+      if (val.statusCode == 200) {
+        UserModel um = UserModel.fromJson(jsonDecode(val.body));
+        logindata?.setBool('login', true);
+        RestUrls.authheaders = {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          "Accept": "application/json",
+          HttpHeaders.authorizationHeader: "Bearer " + um.access_token!
+        };
+        final StorageItem item = StorageItem("token", um.access_token);
+        widget._storageService.writeSecureData(item);
+        snackbarKey.currentState
+            ?.showSnackBar(SnackBar(content: Text("Logged In.")));
+      } else {
+        snackbarKey.currentState
+            ?.showSnackBar(SnackBar(content: Text("Please try again.")));
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override

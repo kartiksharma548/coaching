@@ -2,27 +2,31 @@ import 'package:coaching/screens/login_screen.dart';
 import 'package:coaching/services/api_service.dart';
 import 'package:flutter/material.dart';
 
-class AddPlayer extends StatefulWidget {
-  const AddPlayer({Key? key}) : super(key: key);
+class AddUser extends StatefulWidget {
+  const AddUser({Key? key}) : super(key: key);
 
   @override
-  State<AddPlayer> createState() => _AddPlayerState();
+  State<AddUser> createState() => _AddUserState();
 }
 
-class _AddPlayerState extends State<AddPlayer> {
+class _AddUserState extends State<AddUser> {
   TextEditingController txtName = TextEditingController();
-  TextEditingController txtdob = TextEditingController();
-  DateTime selectedDate = DateTime.now();
+  TextEditingController txtEmail = TextEditingController();
+  TextEditingController txtPhone = TextEditingController();
+  TextEditingController txtPwd = TextEditingController();
+  TextEditingController txtConfPwd = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  addPlayer() {
+  register() {
     if (_formKey.currentState!.validate()) {
       var obj = {
         "name": txtName.text,
-        "dob": txtdob.text,
+        "email": txtEmail.text,
+        "phone": txtPhone.text,
+        "password": txtPwd.text
       };
 
-      var res = RestUrls.addPlayer(obj);
+      var res = RestUrls.register(obj);
       res
           .then((value) => {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -43,7 +47,7 @@ class _AddPlayerState extends State<AddPlayer> {
       }
       return null;
     },
-    //keyboardType: TextInputType.emailAddress,
+    keyboardType: TextInputType.emailAddress,
     autofocus: false,
     decoration: InputDecoration(
       icon: Icon(Icons.person),
@@ -51,45 +55,81 @@ class _AddPlayerState extends State<AddPlayer> {
       contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
     ),
   );
-  late TextFormField dob = TextFormField(
-    controller: txtdob,
+
+  late TextFormField email = TextFormField(
+    controller: txtEmail,
     validator: (value) {
       if (value == null || value.isEmpty) {
-        return 'Please enter dob';
+        return 'Please enter email';
+      } else if (!RegExp(
+              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+          .hasMatch(value)) {
+        return 'Please enter a valid email';
       }
+
       return null;
     },
-    readOnly: true,
-    //keyboardType: TextInputType.datetime,
+    keyboardType: TextInputType.emailAddress,
     autofocus: false,
-    onTap: () => _selectDate(context),
     decoration: InputDecoration(
-      icon: Icon(Icons.date_range),
-      labelText: 'Date of Birth',
+      icon: Icon(Icons.mail),
+      labelText: 'Email ID',
       contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
     ),
   );
-  // late ElevatedButton datePicker = ElevatedButton(
-  //   onPressed: () {
-  //     _selectDate(context);
-  //   },
-  //   child: Text("Choose Date"),
-  // );
 
-  _selectDate(BuildContext context) async {
-    final DateTime? selected = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2050),
-    );
-    if (selected != null && selected != selectedDate)
-      setState(() {
-        selectedDate = selected;
-        txtdob.text =
-            "${selectedDate.year.toString()}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
-      });
-  }
+  late TextFormField number = TextFormField(
+    controller: txtPhone,
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter phone';
+      } else if (!RegExp(r"^((\+91)?|91)?[789][0-9]{9}").hasMatch(value)) {
+        return 'Please enter a valid phone no.';
+      }
+      return null;
+    },
+    keyboardType: TextInputType.emailAddress,
+    autofocus: false,
+    decoration: InputDecoration(
+      icon: Icon(Icons.call),
+      labelText: 'Mobile No.',
+      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+    ),
+  );
+
+  late TextFormField password = TextFormField(
+    controller: txtPwd,
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter password';
+      }
+      return null;
+    },
+    autofocus: false,
+    obscureText: true,
+    decoration: InputDecoration(
+      icon: Icon(Icons.lock),
+      labelText: 'Password',
+      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+    ),
+  );
+
+  late TextFormField conpass = TextFormField(
+    controller: txtConfPwd,
+    validator: (value) {
+      if (value != txtPwd.text) {
+        return 'Passwords does not match';
+      }
+      return null;
+    },
+    autofocus: false,
+    obscureText: true,
+    decoration: InputDecoration(
+      icon: Icon(Icons.spellcheck),
+      labelText: 'Confirm Password',
+      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +175,13 @@ class _AddPlayerState extends State<AddPlayer> {
                     SizedBox(height: 24.0),
                     name,
                     SizedBox(height: 12.0),
-                    dob,
+                    email,
+                    SizedBox(height: 12.0),
+                    number,
+                    SizedBox(height: 12.0),
+                    password,
+                    SizedBox(height: 12.0),
+                    conpass,
                     SizedBox(height: 24.0),
                     Hero(
                       tag: 'hero',
@@ -145,10 +191,10 @@ class _AddPlayerState extends State<AddPlayer> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          onPressed: addPlayer,
+                          onPressed: register,
                           padding: EdgeInsets.all(12),
                           color: Colors.lightBlueAccent,
-                          child: Text('Add Player',
+                          child: Text('Sign Up',
                               style: TextStyle(color: Colors.white)),
                         ),
                       ),
