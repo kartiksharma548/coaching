@@ -3,6 +3,7 @@ import 'package:coaching/screens/add_player_screen.dart';
 import 'package:coaching/screens/add_user_screen.dart';
 import 'package:coaching/screens/home_screen.dart';
 import 'package:coaching/screens/login_screen.dart';
+import 'package:coaching/screens/search_player_screen.dart';
 import 'package:coaching/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,8 +18,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Coaching',
+      title: 'Coaching Guru',
       scaffoldMessengerKey: snackbarKey,
+      debugShowCheckedModeBanner: false,
+
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -29,7 +32,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
       ),
       initialRoute: '/',
       routes: {
@@ -39,7 +42,8 @@ class MyApp extends StatelessWidget {
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/home': (context) => const HomeScreen(),
         '/addUser': (context) => const AddUser(),
-        '/addPlayer': (context) => const AddPlayer()
+        '/addPlayer': (context) => const AddPlayer(),
+        '/searchPlayer': (context) => const SearchPlayerScreen()
       },
       //home: AddPlayer(),
     );
@@ -92,35 +96,54 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            floating: true,
+            pinned: true,
+            snap: false,
+            centerTitle: false,
+            title: Text('Coaching Guru'),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: () {},
+              ),
+            ],
+            bottom: AppBar(
+              title: Container(
+                width: double.infinity,
+                height: 40,
+                color: Colors.white,
+                child: Center(
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: 'Search for something',
+                        prefixIcon: Icon(Icons.search),
+                        suffixIcon: Icon(Icons.camera_alt)),
+                  ),
+                ),
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+          ),
+          // Other Sliver Widgets
+          SliverList(
+            delegate: SliverChildListDelegate([
+              Container(
+                height: 400,
+                child: Center(
+                  child: Text(
+                    'Track Performance seamlessly.',
+                  ),
+                ),
+              ),
+              Container(
+                height: 1000,
+                color: Colors.pink,
+              ),
+            ]),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,

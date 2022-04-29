@@ -1,6 +1,8 @@
 import 'package:coaching/screens/login_screen.dart';
 import 'package:coaching/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddPlayer extends StatefulWidget {
   const AddPlayer({Key? key}) : super(key: key);
@@ -10,6 +12,18 @@ class AddPlayer extends StatefulWidget {
 }
 
 class _AddPlayerState extends State<AddPlayer> {
+  SharedPreferences? logindata;
+
+  @override
+  void initState() {
+    super.initState();
+    checkifalreadylogin();
+  }
+
+  void checkifalreadylogin() async {
+    logindata = await SharedPreferences.getInstance();
+  }
+
   TextEditingController txtName = TextEditingController();
   TextEditingController txtdob = TextEditingController();
   DateTime selectedDate = DateTime.now();
@@ -18,20 +32,15 @@ class _AddPlayerState extends State<AddPlayer> {
   addPlayer() {
     if (_formKey.currentState!.validate()) {
       var obj = {
+        "user_id": logindata?.getInt("user_id"),
         "name": txtName.text,
         "dob": txtdob.text,
       };
 
       var res = RestUrls.addPlayer(obj);
       res
-          .then((value) => {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')))
-              })
-          .onError((error, stackTrace) => {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Please try again later.")))
-              });
+          .then((value) => {postAddPlayerProcess(value)})
+          .onError((error, stackTrace) => {});
     }
   }
 
@@ -75,6 +84,20 @@ class _AddPlayerState extends State<AddPlayer> {
   //   },
   //   child: Text("Choose Date"),
   // );
+  postAddPlayerProcess(Response value) {
+    if (value.statusCode == 200) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Player Added')));
+
+      setState(() {
+        txtdob.text = "";
+        txtName.text = "";
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please try again later.")));
+    }
+  }
 
   _selectDate(BuildContext context) async {
     final DateTime? selected = await showDatePicker(

@@ -2,15 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:coaching/constants.dart';
+import 'package:coaching/services/storage_service.dart';
 import 'package:http/http.dart' as http;
 
 class RestUrls {
   static String apiUrl = Constants.url;
   static final headers = {
-    HttpHeaders.contentTypeHeader: 'application/json',
-    "Accept": "application/json"
-  };
-  static var authheaders = {
     HttpHeaders.contentTypeHeader: 'application/json',
     "Accept": "application/json"
   };
@@ -24,6 +21,11 @@ class RestUrls {
     var request = await http.post(url, headers: headers, body: jsonBody);
 
     return request;
+  }
+
+  static Future<dynamic> getToken() async {
+    final StorageService _storageService = StorageService();
+    return await _storageService.readSecureData("token");
   }
 
   ///login
@@ -62,17 +64,26 @@ class RestUrls {
     var url = Uri.parse(urlName);
 
     var jsonBody = json.encode(obj);
+    String token = await getToken();
+    var authtoken = {HttpHeaders.authorizationHeader: "Bearer $token"};
+
+    var authheaders = {...headers, ...authtoken};
+
     var request = await http.post(url, headers: authheaders, body: jsonBody);
 
     return request;
   }
 
-  static Future<http.Response> getPlayers(var obj) async {
-    String urlName = apiUrl + "getOrders";
+  static Future<http.Response> getPlayers(int id) async {
+    String urlName = apiUrl + "coach/player/" + id.toString();
     var url = Uri.parse(urlName);
 
-    var jsonBody = json.encode(obj);
-    var request = await http.post(url, headers: headers, body: jsonBody);
+    String token = await getToken();
+    var authtoken = {HttpHeaders.authorizationHeader: "Bearer $token"};
+
+    var authheaders = {...headers, ...authtoken};
+
+    var request = await http.get(url, headers: authheaders);
 
     return request;
   }

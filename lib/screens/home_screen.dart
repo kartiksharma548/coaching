@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:coaching/screens/splash_screen.dart';
+import 'package:coaching/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:coaching/models/home_tiles_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   SharedPreferences? logindata;
+  final StorageService _storageService = StorageService();
 
   @override
   void initState() {
@@ -37,7 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('Coaching Guru'),
+      ),
       body: GridView.builder(
         itemCount: HomeTiles.tileList.length,
         itemBuilder: (context, index) => ItemTile(HomeTiles.tileList[index]),
@@ -74,5 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   clearPref() async {
     await logindata?.clear();
+    await _storageService.deleteAllSecureData();
   }
 }

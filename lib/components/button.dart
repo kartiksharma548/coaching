@@ -59,11 +59,7 @@ class _Button extends State<Button> {
       if (val.statusCode == 200) {
         UserModel um = UserModel.fromJson(jsonDecode(val.body));
         logindata?.setBool('login', true);
-        RestUrls.authheaders = {
-          HttpHeaders.contentTypeHeader: 'application/json',
-          "Accept": "application/json",
-          HttpHeaders.authorizationHeader: "Bearer " + um.access_token!
-        };
+        logindata?.setInt("user_id", um.data?.id ?? -1);
         final StorageItem item = StorageItem("token", um.access_token);
         widget._storageService.writeSecureData(item);
         snackbarKey.currentState
