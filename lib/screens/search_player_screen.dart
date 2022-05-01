@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:coaching/models/player_model.dart';
+import 'package:coaching/screens/player_profile_screen.dart';
 import 'package:coaching/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -112,12 +113,12 @@ class _SearchPlayerScreenState extends State<SearchPlayerScreen> {
                                     itemBuilder: ((context, index) {
                                       return GestureDetector(
                                           onTap: () {
-                                            // Navigator.of(context).push(
-                                            //   MaterialPageRoute(
-                                            //     builder: (_) =>
-                                            //         DetailPage(playerList[index]),
-                                            //   ),
-                                            // );
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) => PlayerProfile(
+                                                    playerList[index]),
+                                              ),
+                                            );
                                           },
                                           child:
                                               _productRow(playerList[index]));
