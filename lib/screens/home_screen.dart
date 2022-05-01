@@ -17,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   SharedPreferences? logindata;
   final StorageService _storageService = StorageService();
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -28,6 +29,11 @@ class _HomeScreenState extends State<HomeScreen> {
     logindata = await SharedPreferences.getInstance();
   }
 
+  setBottomBarIndex(index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
   // @override
   // void initState() {
   //   super.initState();
@@ -39,12 +45,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       bottomNavigationBar: Stack(
         children: [
           Container(
               //color: Colors.blueGrey,
-              height: 50,
+              height: 80,
               width: MediaQuery.of(context).size.width,
               child: CustomPaint(
                 painter: CurvePainter(),
@@ -57,6 +64,60 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Icon(Icons.add_circle_outline_sharp),
                 elevation: 0.1,
                 onPressed: () {}),
+          ),
+          Container(
+            width: size.width,
+            height: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.home,
+                    color: currentIndex == 0
+                        ? Color.fromARGB(255, 87, 148, 194)
+                        : Colors.grey.shade400,
+                  ),
+                  onPressed: () {
+                    setBottomBarIndex(0);
+                  },
+                  splashColor: Colors.white,
+                ),
+                IconButton(
+                    icon: Icon(
+                      Icons.restaurant_menu,
+                      color: currentIndex == 1
+                          ? Color.fromARGB(255, 87, 148, 194)
+                          : Colors.grey.shade400,
+                    ),
+                    onPressed: () {
+                      setBottomBarIndex(1);
+                    }),
+                Container(
+                  width: size.width * 0.20,
+                ),
+                IconButton(
+                    icon: Icon(
+                      Icons.bookmark,
+                      color: currentIndex == 2
+                          ? Color.fromARGB(255, 87, 148, 194)
+                          : Colors.grey.shade400,
+                    ),
+                    onPressed: () {
+                      setBottomBarIndex(2);
+                    }),
+                IconButton(
+                    icon: Icon(
+                      Icons.notifications,
+                      color: currentIndex == 3
+                          ? Color.fromARGB(255, 87, 148, 194)
+                          : Colors.grey.shade400,
+                    ),
+                    onPressed: () {
+                      setBottomBarIndex(3);
+                    }),
+              ],
+            ),
           )
         ],
       ),
